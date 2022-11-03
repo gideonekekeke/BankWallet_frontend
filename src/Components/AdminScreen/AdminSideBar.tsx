@@ -16,22 +16,15 @@ const AdminSideBar = () => {
 	const myWallet = useRecoilValue(WalletAcc);
 	const [walletData, setWalletData] = useRecoilState(WalletAcc);
 
-	// axios.get(`${url}/api/wallet/${users._id}/wallet`).then((res) => {
-	// 	setWalletData(res.data.data);
-	// });
-
-	// console.log("this is the wallet", walletData);
-	// console.log("this is the user", users?._id);
-
 	const getWallet = async () => {
 		await axios.get(`${url}/api/wallet/${users?._id}/wallet`).then((res) => {
 			setWalletData(res.data.data);
 		});
 	};
 
-	// React.useEffect(() => {
-	// 	getWallet();
-	// }, []);
+	React.useEffect(() => {
+		getWallet();
+	}, []);
 
 	return (
 		<Container>

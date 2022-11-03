@@ -17,3 +17,7 @@ export const accountUser = atom({
 	key: "accountUser",
 	default: {} as Users | null,
 });
+export const Trans = atom({
+	key: "Trans",
+	default: [] as Array<WalletUser> | null,
+});

@@ -14,6 +14,7 @@ const TransactionPage: React.FC = () => {
 	const url: string = "http://localhost:5000";
 
 	const [acc, setAcc] = useRecoilState(accountUser);
+	const readAccountUser = useRecoilValue(accountUser);
 
 	const navigate = useNavigate();
 
@@ -21,9 +22,13 @@ const TransactionPage: React.FC = () => {
 	const me = useRecoilValue(User);
 
 	console.log(userData);
+	const [amount, setAmount] = React.useState("");
 
 	const schema = yup.object().shape({
 		accountNumber: yup.number().required("this field is required"),
+	});
+	const schema2 = yup.object().shape({
+		amount: yup.number().required("this field is required"),
 	});
 
 	const {
@@ -36,8 +41,19 @@ const TransactionPage: React.FC = () => {
 		resolver: yupResolver(schema),
 	});
 
+	const {
+		handleSubmit: handleSubmit2,
+		register: register2,
+		reset: reset2,
+		// setError,
+	} = useForm({
+		resolver: yupResolver(schema2),
+	});
+
 	const querySearchAccount = handleSubmit(async (data) => {
 		const { accountNumber } = data;
+
+		console.log(data);
 
 		await axios
 			.get(`${url}/api/users/quer?accountNumber=${accountNumber}`)
@@ -52,6 +68,28 @@ const TransactionPage: React.FC = () => {
 				setAcc(res.data);
 
 				console.log("this is the data");
+			});
+	});
+	const TransferMoney = handleSubmit2(async (data) => {
+		const { amount } = data;
+		await axios
+			.patch(`${url}/api/wallet/${me?._id}/${readAccountUser?._id}/send`, {
+				token: me?.accesstoken,
+				amount,
+			})
+			.then((res) => {
+				Swal.fire({
+					icon: "success",
+					title: res.data.message,
+					timer: 1000,
+					showConfirmButton: false,
+				});
+			});
+		await axios
+			.patch(`${url}/api/history/${me?._id}/${readAccountUser?._id}/history`)
+			.then(() => {
+				reset();
+				reset2();
 			});
 	});
 
@@ -92,17 +130,20 @@ const TransactionPage: React.FC = () => {
 							</TextHold>
 						</InputHold>
 					</Card>
-					<Card>
+					<Card onSubmit={TransferMoney}>
 						<InputHold2>
 							<TextHold>
-								<input placeholder='Enter Transfer Amount' />
+								<input
+									{...register2("amount")}
+									placeholder='Enter Transfer Amount'
+								/>
 							</TextHold>
 						</InputHold2>
+
+						<GlobalButton wd='170px' title='Proceed Now' />
 					</Card>
 
 					{/* <MoonLoader size={20} color='#fff' /> */}
-
-					<GlobalButton wd='170px' title='Proceed Now' />
 				</>
 			) : null}
 			<p>AJWALLET -Secure. Safe. Reliable</p>

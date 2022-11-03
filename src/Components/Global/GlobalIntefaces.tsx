@@ -21,5 +21,14 @@ export interface WalletUser {
 	debit?: number;
 	amount?: number;
 	paymentDescription?: string;
-	history?: {}[];
+	history: {}[];
+	sentTo?: string;
+	recieviedForm?: string;
+
+	transactionsReference?: number;
+	transactionDescription?: string;
+	availableBalance?: number;
+	paymentType: string;
+	wallet: {};
+	createdAt?: string;
 }
